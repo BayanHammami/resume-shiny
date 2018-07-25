@@ -10,6 +10,12 @@ home <- tabPanel("Home",
                         "This site was built with R and the following packages; 
                         shiny, ggplot2, ggnet, network, wordcloud, fmsb, dplyr, tm and a few more."
                       ),
+                      p(
+                        "The code for this app can be found here: https://github.com/BayanHammami/resume-shiny"
+                      ),
+                      p(
+                        "Please contact me on: bayan.hammami@gmail.com"
+                      ),
 
                       hr(),
                       sliderInput(
