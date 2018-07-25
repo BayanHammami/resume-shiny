@@ -1,3 +1,4 @@
+library(glue)
 library(sendmailR)
 library(readr)
 library(ggplot2)
@@ -10,16 +11,21 @@ library(ggnet)
 library(network)
 library(sna)
 library(stringr)
+library(digest)
+library(promises)
+
+options(warn=-1)
+
 
 academic_transcript <- read_csv('./data/academic_transcript.csv')
-tasks <- NULL
-
 fileName <- './data/resume_text.txt'
 resume_text <- readChar(fileName, file.info(fileName)$size)
-
 employment_data <- read_csv('./data/employment_data.csv')
 
-build_network_graph <- function(employment_data, min_freq = 0, company){
+build_network_graph <- function(employment_data, min_freq = 0, company, regenerate){
+  args_val <- list(employment_data, min_freq, company, regenerate)
+  source('./cache.R', local = TRUE)
+  
   employment_data <- employment_data %>% 
     filter(Company == company)
   all_skill_edges <- lapply(1:nrow(employment_data), function(tag_index){
@@ -45,8 +51,9 @@ build_network_graph <- function(employment_data, min_freq = 0, company){
   net %v% "freq_node" = all_skills_nodes$freq_node
   network_plot <- 
     ggnet2(net, label = T, edge.size = "freq", edge.color = "freq", edge.alpha = 0.1, layout.exp = 0.3, size = "degree", legend.position = "none")
-  return(network_plot)
   
+  saveRDS(network_plot, path_to_cache_file)
+  return(network_plot)
   
 } 
 
@@ -82,7 +89,8 @@ skills_df <- data.frame(
 )
 
 generic_radarchart <- function(names_vector, score_vector){
-  
+  args_val <-  list(names_vector, score_vector)
+  source('./cache.R', local = TRUE)
   data=as.data.frame(matrix(score_vector , ncol=length(names_vector)))
   data=rbind(rep(10,length(names_vector)) , rep(0,length(names_vector)) , data)
   colnames(data) <- names_vector
@@ -98,11 +106,13 @@ generic_radarchart <- function(names_vector, score_vector){
     cglwd = 0.8,
     vlcex = 1.5
   )
+  saveRDS(chart, path_to_cache_file)
   return(chart)
 }
 
-generic_wordcloud <- function(vector_source, scale = c(6, 1.5), min.freq = 1){
-  
+generic_wordcloud <- function(vector_source, scale = c(6, 1.5), min.freq = 1, regenerate = 0){
+  args_val <-  list(vector_source, scale, min.freq, regenerate)
+  source('./cache.R', local = TRUE)
   course_name_words <- docs <- Corpus(VectorSource(vector_source))
   # inspect(docs)
   toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
@@ -139,7 +149,8 @@ generic_wordcloud <- function(vector_source, scale = c(6, 1.5), min.freq = 1){
       scale = scale,
       fixed.asp = T
       
-    )  
+    )
+  saveRDS(wordcloud_plot, path_to_cache_file)
   return(wordcloud_plot)
 }
 

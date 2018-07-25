@@ -30,12 +30,19 @@ server <- function(input, output) {
   
   output$home_plot <- renderPlot({
     input$home_regenerate
-    generic_wordcloud(resume_text, min.freq = input$min_word_freq)
+    p <- generic_wordcloud(resume_text, min.freq = input$min_word_freq, regenerate = input$home_regenerate)
+    
+    return(p)
   })
   
   output$experience_plot <- renderPlot({
     input$experience_regenerate
-    build_network_graph(employment_data, min_freq = input$min_con_freq, input$experience_section)
+    build_network_graph(
+      employment_data,
+      min_freq = input$min_con_freq,
+      input$experience_section,
+      input$experience_regenerate
+    )
   })
   
   

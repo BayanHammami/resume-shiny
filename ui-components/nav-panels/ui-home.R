@@ -11,12 +11,11 @@ home <- tabPanel("Home",
                         shiny, ggplot2, ggnet, network, wordcloud, fmsb, dplyr, tm and a few more."
                       ),
                       p(
-                        "The code for this app can be found here: https://github.com/BayanHammami/resume-shiny"
+                        "The code for this app can be found here:", tags$b(tags$a(href ="https://github.com/BayanHammami/resume-shiny", "https://github.com/BayanHammami/resume-shiny"))
                       ),
                       p(
-                        "Please contact me on: bayan.hammami@gmail.com"
+                        "Please contact me on:", tags$b("bayan.hammami@gmail.com")
                       ),
-
                       hr(),
                       sliderInput(
                         "min_word_freq",
@@ -53,3 +52,5 @@ home <- tabPanel("Home",
                       plotOutput("home_plot", height = "600px")
                     ))
 )
+
+
