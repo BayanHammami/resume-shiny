@@ -49,7 +49,9 @@ home <- tabPanel("Home",
                       )                      
                     ),
                     mainPanel(
-                      plotOutput("home_plot", height = "600px")
+                      plotOutput("home_plot", height = "600px"),
+                      style="text-align: center;"
+                      
                     ))
 )
 

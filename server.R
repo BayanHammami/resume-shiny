@@ -27,13 +27,44 @@ server <- function(input, output) {
       generic_radarchart(skills_df$skill_names, skills_df$skill_scores)
     }
   })
+  # 
+  # output$home_plot <- renderPlot({
+  #   input$home_regenerate
+  #   generic_wordcloud(
+  #     resume_text,
+  #     min.freq = input$min_word_freq,
+  #     regenerate = input$home_regenerate
+  #   )
+  #   
+  #   return(p)
+  # })
+  # 
+
   
-  output$home_plot <- renderPlot({
-    input$home_regenerate
-    p <- generic_wordcloud(resume_text, min.freq = input$min_word_freq, regenerate = input$home_regenerate)
+  output$home_plot <- renderImage({
+    filename <-
+      paste0(digest::digest(c(
+        input$min_word_freq, input$home_regenerate
+      ))
+      , ".png")
+    full_path <- paste0('./precalculated/', filename)
+    if (filename %in% list.files('./precalculated/')) {
+      list(src = full_path)
+    } else {
+      png(full_path)
+      generic_wordcloud(
+        resume_text,
+        min.freq = input$min_word_freq,
+        regenerate = input$home_regenerate
+      )
+      dev.off()
+      list(src = full_path)
+    }
     
-    return(p)
-  })
+  }, deleteFile = FALSE)
+
+
+  
   
   output$experience_plot <- renderPlot({
     input$experience_regenerate
@@ -44,6 +75,8 @@ server <- function(input, output) {
       input$experience_regenerate
     )
   })
+  
+  
   
   
   observe({
